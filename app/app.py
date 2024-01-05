@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 from controller.controllerProducto import *
 import json
 
@@ -17,16 +17,52 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 application = app
 
+# Configurando la clave secreta para sesiones
+app.secret_key = '19562436554'
+
 CORS(app) #HABILITA QUE PARA QUE EL BACKEND SE PUEDA CONSUMIR DESDE OTRO SERVIDOR
 
 msg  =''
 tipo =''
 
 
-#Creando mi decorador para el home, el cual retornara la Lista de productos
-@app.route('/', methods=['GET','POST'])
+
+
+# Lista de usuarios y contraseñas (reemplaza con tus usuarios reales)
+usuarios = {
+    'Admin': 'Leloir2014ok',
+    'usuario2': 'contraseña2',
+    'usuario3': 'contraseña3'
+}
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        usuario_ingresado = request.form.get('username')
+        contraseña_ingresada = request.form.get('password')
+
+        if usuario_ingresado in usuarios and contraseña_ingresada == usuarios[usuario_ingresado]:
+            session['logged_in'] = True
+            session['username'] = usuario_ingresado
+            return redirect(url_for('inicio'))
+        else:
+            return render_template('/public/login.html', error='Credenciales incorrectas')
+    return render_template('/public/login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    session.pop('username', None)
+    return redirect(url_for('login'))
+
+@app.route('/inicio')
 def inicio():
-    return render_template('public/layout.html', miData = listaProductos())
+    if 'logged_in' in session and session['logged_in']:
+        return render_template('public/layout.html', miData=listaProductos())
+    else:
+        return redirect(url_for('login'))
+
+
 
 
 #RUTAS
@@ -258,3 +294,5 @@ def api_obtener_todos_los_productos():
     
 if __name__ == "__main__":
     app.run(debug=True, port=8000)
+
+

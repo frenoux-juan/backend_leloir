@@ -1,0 +1,67 @@
+<!-- login.html -->
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Adminstración de productos</title>
+        <link rel="shortcut icon" href="{{url_for('static', filename ='assets/imgs/favicon.png')}}" type="image/x-icon">
+        <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/tooltip.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom_alert.css') }}">
+      </head>
+      <body class="bg-light">
+
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">Iniciar Sesión</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('login') }}">
+                                <!-- Campo de nombre de usuario -->
+                                <div class="form-group">
+                                    <label for="username">Usuario</label>
+                                    <input type="text" class="form-control" id="username" name="username" required>
+                                </div>
+                                <!-- Campo de contraseña con opción de mostrar/ocultar -->
+                                <div class="form-group">
+                                    <label for="password">Contraseña</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="password" name="password" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">
+                                                <input type="checkbox" onclick="mostrarContrasena()"> Mostrar
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Botón de inicio de sesión -->
+                                <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Agrega enlaces a los scripts de Bootstrap y la función para mostrar/ocultar la contraseña -->
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <script>
+            function mostrarContrasena() {
+                var x = document.getElementById("password");
+                if (x.type === "password") {
+                    x.type = "text";
+                } else {
+                    x.type = "password";
+                }
+            }
+        </script>
+        </body>
+</html>

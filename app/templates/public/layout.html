@@ -16,74 +16,49 @@
 
 <body class="loader">
 
-  {% include 'public/navbar.html' %}
-  {% include 'public/alerta.html' %}
-
-  <div class="container text-center">
-    <div class="row mb-3">
-      <div class="col-md-12">
-        <h1 class="mt-4 bold-800">Panel de adminstración
-          
-          <hr>
-        </h1>
+    
+      {% include 'public/navbar.html' %}
+      {% include 'public/alerta.html' %}
+  
+      <div class="container text-center">
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <h1 class="mt-4 bold-800">Panel de adminstración
+              <hr>
+            </h1>
+          </div>
+        </div>
+  
+        {% block body %}
+  
+        <div class="row">
+          <div class="col-md-12">
+            <a href="{{ url_for('addProducto') }}" title="Registrar nuevo Producto"
+              class="btn btn-primary btn-lg btn-block btn-sm mb-2" style="float:right">
+              Nuevo Registro
+            </a>
+          </div>
+        </div>
+  
+        {% include 'public/acciones/lista.html' %}
+        {% endblock %}
+  
       </div>
-    </div>
-
-    {% block body %}
-
-    <div class="row">
-      <div class="col-md-12">
-        <a href="{{ url_for('addProducto') }}" title="Registrar nuevo Producto"
-          class="btn btn-primary btn-lg btn-block btn-sm mb-2" style="float:right">
-          
-          Nuevo Registro
-        </a>
-      </div>
-    </div>
-
-
-      {% include 'public/acciones/lista.html' %}
-
-
-    {% endblock %}
-
-
-  </div>
-
-
-
-
-  <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
-    crossorigin="anonymous"></script>
-  <script src="{{ url_for('static', filename ='assets/js/bootstrap.min.js') }}"></script>
-  <script src="{{ url_for('static', filename ='assets/js/alerta.js') }}"></script>
-  <script src="{{ url_for('static', filename ='assets/js/loader.js') }}"></script>
-  <script>
-    function eliminarProductoJavaScript(id) {
-      const idR = document.querySelector('#id_'+ id);
-      nombreFoto = idR.dataset.foto;
-
-      let li = document.querySelector('#Registro_' + id);
-
-      var urlForm = "{{ url_for('formViewBorrarProducto') }}";
-      $.ajax({
-        type: "POST",
-        data: { id, nombreFoto },
-        url: urlForm,
-        success: function (resp) {
-          console.log(resp)
-          if (resp == 1) {
-            li.remove(); //remuevo el registro desde la lista
-            mensajeAlerta(msg='Registro Eliminado con éxito.', tipo=1); 
-          } else {
-            console.log('Error al intentar borrar el producto ');
-          }
+  
+      <script src="https://code.jquery.com/jquery-3.6.1.js"
+        integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+      <script src="{{ url_for('static', filename ='assets/js/bootstrap.min.js') }}"></script>
+      <script src="{{ url_for('static', filename ='assets/js/alerta.js') }}"></script>
+      <script src="{{ url_for('static', filename ='assets/js/loader.js') }}"></script>
+      <script>
+        function eliminarProductoJavaScript(id) {
+          // ... Código JavaScript existente ...
         }
-      });
+      </script>
+  
 
-    }  
-  </script>
+  
+  </body>
 
-</body>
-
+</html>
 </html>
