@@ -4,10 +4,10 @@ import mysql.connector
 
 def connectionBD():
     mydb = mysql.connector.connect(
-        host ="localhost",
-        user ="root",
-        passwd ="",
-        database = "leloir"
+        host ="frenoux1.mysql.pythonanywhere-services.com",
+        user ="frenoux1",
+        passwd ="mica2013*",
+        database = "frenoux1$leloir"
         )
     if mydb:
         print ("Conexion exitosa a BD")
