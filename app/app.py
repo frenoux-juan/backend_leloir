@@ -78,8 +78,8 @@ def formAddProducto():
     if request.method == 'POST':
         nombre = request.form['nombre']
         memo = request.form['memo']
-        fecha_publicacion = request.form['fecha_publicacion']  # Obtener el nuevo campo de fecha
-        categoria = request.form['categoria']  # Obtener el nuevo campo de categoría
+        fecha_publicacion = request.form['fecha_publicacion']
+        categoria = request.form['categoria']
 
         # Verificar que se haya cargado un archivo
         if 'imagen' in request.files and request.files['imagen'].filename != '':
@@ -89,11 +89,17 @@ def formAddProducto():
             # Obtener el enlace de la galería desde el formulario (lista de archivos si se seleccionan múltiples)
             enlacesGaleria = request.files.getlist('enlace_galeria[]')
 
+            # Procesar cada imagen de la galería
+            galeria = []
+            for file in enlacesGaleria:
+                nuevoNombreFileGaleria = recibeFoto(file)
+                galeria.append(nuevoNombreFileGaleria)
+
             # Convertir la lista de enlaces de la galería a una cadena JSON
-            galeria = json.dumps([stringAleatorio() + os.path.splitext(file.filename)[1] for file in enlacesGaleria])
+            galeria_json = json.dumps(galeria)
 
             # Llamada a la función registrarProducto con los nuevos campos "fecha_publicacion" y "categoria"
-            resultData = registrarProducto(fecha_publicacion, nombre, nuevoNombreFile, memo, galeria, categoria)
+            resultData = registrarProducto(fecha_publicacion, nombre, nuevoNombreFile, memo, galeria_json, categoria)
 
             # Verificar el resultado de la operación
             if resultData == 1:
@@ -128,6 +134,39 @@ def viewDetalleProducto(id):
     return redirect(url_for('inicio'))
     
 
+# Nueva función para actualizar un producto
+def actualizarProducto(id, fecha_publicacion, nombre, nueva_imagen, memo, enlaces_galeria_json, categoria):
+    conexion_MySQLdb = connectionBD()
+    cur = conexion_MySQLdb.cursor(dictionary=True)
+
+    # Obtener las imágenes de la galería actuales del producto
+    cur.execute('SELECT galeria FROM productos WHERE id=%s', (id,))
+    producto_actual = cur.fetchone()
+    galeria_actual = json.loads(producto_actual['galeria']) if producto_actual and 'galeria' in producto_actual else []
+
+    # Eliminar las imágenes de la galería existentes si hay alguna
+    basepath = os.path.dirname(__file__)
+    for imagen in galeria_actual:
+        try:
+            imagen_path = os.path.join(basepath, 'static/assets/fotos_productos', imagen)
+            os.remove(imagen_path)
+        except FileNotFoundError:
+            # Manejar la excepción si la imagen no se encuentra (no mostrar un error)
+            pass
+
+    # Agregar las nuevas imágenes de la galería
+    nuevas_imagenes = json.loads(enlaces_galeria_json)
+
+    # Actualizar los campos del producto en la base de datos
+    cur.execute('UPDATE productos SET fecha_publicacion=%s, nombre=%s, imagen=%s, memo=%s, galeria=%s, categoria=%s WHERE id=%s',
+                (fecha_publicacion, nombre, nueva_imagen, memo, json.dumps(nuevas_imagenes), categoria, id))
+    conexion_MySQLdb.commit()
+
+    # Verificar el número de filas afectadas para determinar si la actualización fue exitosa
+    resultado_actualizar = cur.rowcount
+
+    return resultado_actualizar
+
 @app.route('/actualizar-producto/<string:id>', methods=['POST'])
 def formActualizarProducto(id):
     if request.method == 'POST':
@@ -150,7 +189,7 @@ def formActualizarProducto(id):
         enlaces_galeria_json = json.dumps([stringAleatorio() + os.path.splitext(file.filename)[1] for file in enlacesGaleria])
 
         # Actualizar producto con la nueva información
-        resultData = registrarProducto(fecha_publicacion, nombre, nueva_imagen, memo, enlaces_galeria_json, categoria)
+        resultData = actualizarProducto(id, fecha_publicacion, nombre, nueva_imagen, memo, enlaces_galeria_json, categoria)
 
 
         # Manejo de resultados
@@ -161,6 +200,7 @@ def formActualizarProducto(id):
 
     # Código después de return, no se ejecutará
     return render_template('public/layout.html', miData=listaProductos(), msg='Petición no válida', tipo=1)
+
 
 
 
@@ -176,7 +216,7 @@ def formViewBorrarProducto():
         else:
             return jsonify([0])
 
-def eliminarProducto(id='', imagen=''):
+def eliminarProducto(id=''):
     # Establecer la conexión a la base de datos
     conexion_MySQLdb = connectionBD()
     cur = conexion_MySQLdb.cursor(dictionary=True)
@@ -185,27 +225,37 @@ def eliminarProducto(id='', imagen=''):
     cur.execute('SELECT * FROM productos WHERE id=%s', (id,))
     producto = cur.fetchone()
 
+    if not producto:
+        return 0  # No existe el producto, retorno indicando que no se realizó la eliminación
+
+    # Obtener las imágenes del producto
+    imagen_principal = producto.get('imagen', '')
+    galeria_imagen = producto.get('galeria', [])
+
     # Eliminar el producto de la base de datos
     cur.execute('DELETE FROM productos WHERE id=%s', (id,))
     conexion_MySQLdb.commit()
     resultado_eliminar = cur.rowcount
 
-    # Eliminar la imagen individual del producto
+    # Eliminar la imagen principal del producto
     basepath = os.path.dirname(__file__)
-    url_File = os.path.join(basepath, 'static/assets/fotos_productos', imagen)
-    os.remove(url_File)
+    if imagen_principal:
+        imagen_principal_path = os.path.join(basepath, 'static/assets/fotos_productos', imagen_principal)
+        try:
+            os.remove(imagen_principal_path)
+        except FileNotFoundError:
+            pass  # No mostrar error si la imagen principal no se encuentra
 
-    # Eliminar la imagen asociada a la galería (si existe)
+    # Eliminar las imágenes asociadas a la galería (si existen)
     galeria_path = os.path.join(basepath, 'static/assets/fotos_productos')
-    galeria_imagen = producto.get('imagen_galeria')  # Asumiendo que hay un campo 'imagen_galeria' en la base de datos
-
-    if galeria_imagen:
-        galeria_url = os.path.join(galeria_path, galeria_imagen)
-        os.remove(galeria_url)
+    for galeria_imagen_nombre in galeria_imagen:
+        galeria_imagen_path = os.path.join(galeria_path, galeria_imagen_nombre)
+        try:
+            os.remove(galeria_imagen_path)
+        except FileNotFoundError:
+            pass  # No mostrar error si alguna imagen de la galería no se encuentra
 
     return resultado_eliminar
-
-
 
 def recibeFoto(file):
     print(file)
