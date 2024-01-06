@@ -164,40 +164,44 @@ def formActualizarProducto(id):
 
 
 
-#Eliminar producto
-@app.route('/borrar-producto', methods=['GET', 'POST'])
+@app.route('/borrar-producto', methods=['POST'])
 def formViewBorrarProducto():
     if request.method == 'POST':
-        id         = request.form['id']
-        imagen      = request.form['nombreFoto']
-        resultData      = eliminarProducto(id, imagen)
+        id = request.form['id']
+        imagen = request.form['nombreFoto']
+        resultData = eliminarProducto(id, imagen)
 
-        if resultData ==1:
-            #Nota: retorno solo un json y no una vista para evitar refescar la vista
+        if resultData == 1:
             return jsonify([1])
-            #return jsonify(["respuesta", 1])
-        
-        else: 
+        else:
             return jsonify([0])
 
-
-
-
 def eliminarProducto(id='', imagen=''):
-        
-    conexion_MySQLdb = connectionBD() #Hago instancia a mi conexion desde la funcion
-    cur              = conexion_MySQLdb.cursor(dictionary=True)
-    
+    # Establecer la conexión a la base de datos
+    conexion_MySQLdb = connectionBD()
+    cur = conexion_MySQLdb.cursor(dictionary=True)
+
+    # Obtener la información del producto antes de eliminarlo
+    cur.execute('SELECT * FROM productos WHERE id=%s', (id,))
+    producto = cur.fetchone()
+
+    # Eliminar el producto de la base de datos
     cur.execute('DELETE FROM productos WHERE id=%s', (id,))
     conexion_MySQLdb.commit()
-    resultado_eliminar = cur.rowcount #retorna 1 o 0
-    #print(resultado_eliminar)
-    
-    basepath = os.path.dirname (__file__) #C:\xampp\htdocs\localhost\Crud-con-FLASK-PYTHON-y-MySQL\app
-    url_File = os.path.join (basepath, 'static/assets/fotos_productos', imagen)
-    os.remove(url_File) #Borrar foto desde la carpeta
-    #os.unlink(url_File) #Otra forma de borrar archivos en una carpeta
-    
+    resultado_eliminar = cur.rowcount
+
+    # Eliminar la imagen individual del producto
+    basepath = os.path.dirname(__file__)
+    url_File = os.path.join(basepath, 'static/assets/fotos_productos', imagen)
+    os.remove(url_File)
+
+    # Eliminar la imagen asociada a la galería (si existe)
+    galeria_path = os.path.join(basepath, 'static/assets/fotos_productos')
+    galeria_imagen = producto.get('imagen_galeria')  # Asumiendo que hay un campo 'imagen_galeria' en la base de datos
+
+    if galeria_imagen:
+        galeria_url = os.path.join(galeria_path, galeria_imagen)
+        os.remove(galeria_url)
 
     return resultado_eliminar
 
@@ -302,5 +306,3 @@ def api_obtener_todos_los_productos():
     
 if __name__ == "__main__":
     app.run(debug=True, port=8000)
-
-
