@@ -11,55 +11,74 @@
     </h2>
 
     {% if (dataInfo) %}
-      <form action="{{ url_for('formActualizarProducto', id=dataInfo.id) }}" method="POST" class="mb-3" autocomplete="off" enctype="multipart/form-data">
-        <input type="text" class="form-control" name="id" value="{{ dataInfo.id }}" required hidden>
-        
-        <div class="row">
-            <div class="col">
-                <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" value="{{ dataInfo.nombre }}" class="form-control">
-            </div>
-            <div class="col">
-                <label for="memo">Descripcion</label>
-                <input type="text" name="memo" value="{{ dataInfo.memo }}" class="form-control">
-            </div>
-        </div>
+        <form action="{{ url_for('formActualizarProducto', id=dataInfo.id) }}" method="POST" class="mb-3" autocomplete="off" enctype="multipart/form-data">
 
-        <div class="row">
-            {% set urlProducto = '/static/assets/fotos_productos/' %}
-            <div class="col-md-6">
-                {% if(dataInfo.imagen !="") %}
-                    <img src="{{ urlProducto }}{{ dataInfo.imagen }}" class="foto_update" alt="{{ dataInfo.nombre }}">
-                {% else %}
-                    <img src="{{ urlProducto }}sin_foto.jpg" class="foto_update" alt="imagen-sin">
-                {% endif %}
-            </div>
-            <div class="col-md-6">
-                <label for="foto">Cambiar Foto Destacada</label>
-                <input type="file" name="imagen" class="form-control-file" accept="image/*">
-            </div>
-        </div>
-        <br><br>
+            <input type="text" class="form-control" name="id" value="{{ dataInfo.id }}" required hidden>
 
-        <div class="row">
-            <div class="col">
-                <label for="galeria">Agregar fotos a la Galería</label>
-                <input type="file" name="enlace_galeria[]" class="form-control-file" accept="image/*" multiple>
+            <div class="row">
+                <div class="col">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" name="nombre" value="{{ dataInfo.nombre }}" class="form-control">
+                </div>
+                <div class="col">
+                    <label for="memo">Descripción</label>
+                    <input type="text" name="memo" value="{{ dataInfo.memo }}" class="form-control">
+                </div>
             </div>
-        </div>
-        
-        <hr>
-        <input class="button-primary mt-3 btn btn-info btn-block bold" type="submit" value="Guardar Actualización">
-    </form>
 
-      {% else %}
-      <div class="col-12">
-          <h2 class="text-center">
-              No existe el Producto
-          </h2>
-      </div>
+            <div class="row">
+                <div class="col">
+                    <label for="categoria">Categoría</label>
+                    <select name="categoria" class="form-control">
+                        <option value="inicial" {% if dataInfo.categoria == 'inicial' %}selected{% endif %}>Inicial</option>
+                        <option value="secundaria" {% if dataInfo.categoria == 'secundaria' %}selected{% endif %}>Secundaria</option>
+                        <option value="administracion" {% if dataInfo.categoria == 'administracion' %}selected{% endif %}>Administración</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for="fecha">Fecha de Publicación</label>
+                    <input type="date" name="fecha" value="{{ dataInfo.fecha }}" class="form-control">
+                </div>
+            </div>
+
+            <div class="row">
+                {% set urlProducto = '/static/assets/fotos_productos/' %}
+                <div class="col-md-6">
+                    {% if(dataInfo.imagen !="") %}
+                        <img src="{{ urlProducto }}{{ dataInfo.imagen }}" class="foto_update" alt="{{ dataInfo.nombre }}">
+                    {% else %}
+                        <img src="{{ urlProducto }}sin_foto.jpg" class="foto_update" alt="imagen-sin">
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <label for="foto">Cambiar Foto Destacada</label>
+                    <input type="file" name="imagen" class="form-control-file" accept="image/*">
+                </div>
+            </div>
+            <br><br>
+
+            <div class="row">
+                <div class="col">
+                    <label for="galeria">Agregar fotos a la Galería</label>
+                    <input type="file" name="enlace_galeria[]" class="form-control-file" accept="image/*" multiple>
+                </div>
+            </div>
+
+            <hr>
+            <input class="button-primary mt-3 btn btn-info btn-block bold" type="submit" value="Guardar Actualización">
+        </form>
+    {% else %}
+        <div class="col-12">
+            <h2 class="text-center">
+                No existe el Producto
+            </h2>
+        </div>
     {% endif %}
 
 </section>
 
 {% endblock %}
+

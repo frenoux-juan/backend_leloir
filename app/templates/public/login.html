@@ -4,13 +4,11 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Adminstración de productos</title>
+        <title>Administración de Publicaciones</title>
         <link rel="shortcut icon" href="{{url_for('static', filename ='assets/imgs/favicon.png')}}" type="image/x-icon">
         <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
-        <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/style.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/tooltip.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom_alert.css') }}">
+ 
       </head>
       <body class="bg-light">
 
@@ -50,9 +48,7 @@
         </div>
         
         <!-- Agrega enlaces a los scripts de Bootstrap y la función para mostrar/ocultar la contraseña -->
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    
         <script>
             function mostrarContrasena() {
                 var x = document.getElementById("password");

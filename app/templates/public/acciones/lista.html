@@ -1,6 +1,5 @@
-
 <!-- {{ miData }} -->
-{% if (miData) %}
+{% if miData %}
 <div class="table-responsive">
     <table class="table table-bordered table-hover">
         <thead>
@@ -21,7 +20,7 @@
                 <td>{{ producto.memo }}</td>
 
                 <td>
-                    {% if(producto.imagen !="") %}
+                    {% if producto.imagen %}
                     <img src="{{ urlProducto }}{{ producto.imagen }}" class="sin_foto_mini" alt="{{ producto.nombre }}">
                     {% else %}
                     <img src="{{ urlProducto }}sin_foto.jpg" class="sin_foto_mini" alt="coche">
@@ -39,7 +38,7 @@
                             <i class="bi bi-arrow-clockwise"></i>
                             Actualizar
                         </a>
-                        <a href="#" id="id_{{ producto.id }}" data-foto="{{ producto.imagen }}" onclick="eliminarProductoJavaScript('{{ producto.id }}');" class="btn btn-danger btn-sm"
+                        <a href="#" data-id="{{ producto.id }}" data-foto="{{ producto.imagen }}" class="btn btn-danger btn-sm eliminar-producto"
                             tooltip="Eliminar Registro">
                             <i class="bi bi-trash3"></i>
                             Eliminar
@@ -59,3 +58,38 @@
     </div>
 </div>
 {% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const eliminarBotones = document.querySelectorAll('.eliminar-producto');
+
+        eliminarBotones.forEach(boton => {
+            boton.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const foto = this.getAttribute('data-foto');
+
+                if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+                    // Realizar la solicitud para eliminar el producto
+                    fetch(`/borrar-producto`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `id=${id}&nombreFoto=${foto}`,
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data[0] === 1) {
+                            // Producto eliminado correctamente
+                            alert('Producto eliminado correctamente');
+                            window.location.reload(); // Recargar la página o actualizar la tabla de productos
+                        } else {
+                            alert('Error al eliminar el producto');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+            });
+        });
+    });
+</script>

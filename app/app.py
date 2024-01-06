@@ -49,20 +49,20 @@ def login():
             return render_template('/public/login.html', error='Credenciales incorrectas')
     return render_template('/public/login.html')
 
+
+@app.route('/')
+def inicio():
+    if 'logged_in' in session and session['logged_in']:
+        return render_template('/public/layout.html', miData=listaProductos())
+    else:
+        return redirect(url_for('login'))
+
+
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
     return redirect(url_for('login'))
-
-@app.route('/inicio')
-def inicio():
-    if 'logged_in' in session and session['logged_in']:
-        return render_template('public/layout.html', miData=listaProductos())
-    else:
-        return redirect(url_for('login'))
-
-
 
 
 #RUTAS
@@ -127,26 +127,30 @@ def viewDetalleProducto(id):
     return redirect(url_for('inicio'))
     
 
-# Actualizar producto con galería
 @app.route('/actualizar-producto/<string:id>', methods=['POST'])
 def formActualizarProducto(id):
     if request.method == 'POST':
+        # Acceder a los datos del formulario usando request.form
         nombre = request.form['nombre']
         memo = request.form['memo']
-        nuevoNombreFile = None
-
-        # Manejo de la imagen
+        fecha_publicacion = request.form['fecha_publicacion']
+        categoria = request.form['categoria']
+        
+        # Manejo de la imagen principal
+        nueva_imagen = None
         if 'imagen' in request.files and request.files['imagen']:
             file = request.files['imagen']
-            nuevoNombreFile = recibeFoto(file)
+            nueva_imagen = recibeFoto(file)
 
         # Obtener el enlace de la galería desde el formulario (lista de archivos si se seleccionan múltiples)
         enlacesGaleria = request.files.getlist('enlace_galeria[]')
 
         # Convertir la lista de enlaces de la galería a una cadena JSON
         enlaces_galeria_json = json.dumps([stringAleatorio() + os.path.splitext(file.filename)[1] for file in enlacesGaleria])
-        # Actualizar producto con la nueva galería
-        resultData = recibeActualizarProducto(nombre, memo, nuevoNombreFile, enlaces_galeria_json, id)
+
+        # Actualizar producto con la nueva información
+        resultData = recibeActualizarProducto(nombre, memo, nueva_imagen, enlacesGaleria, fecha_publicacion, categoria, id)
+
 
         # Manejo de resultados
         if resultData:
@@ -156,6 +160,8 @@ def formActualizarProducto(id):
 
     # Código después de return, no se ejecutará
     return render_template('public/layout.html', miData=listaProductos(), msg='Petición no válida', tipo=1)
+
+
 
 #Eliminar producto
 @app.route('/borrar-producto', methods=['GET', 'POST'])

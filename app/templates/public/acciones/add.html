@@ -30,6 +30,25 @@
 
         <div class="row mt-4">
             <div class="col">
+                <label for="fecha_publicacion">Fecha de Publicación</label>
+                <input type="date" name="fecha_publicacion" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col">
+                <label for="categoria">Categoría</label>
+                <select name="categoria" class="form-control" required>
+                    <option value="inicial">Inicial</option>
+                    <option value="primaria">Primaria</option>
+                    <option value="secundaria">Secundaria</option>
+                    <option value="administracion">Administración</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col">
                 <label for="galeria">Galería de Imágenes</label>
                 <input type="file" name="enlace_galeria[]" class="form-control-file" accept="image/*" multiple required>
                 <small class="form-text text-muted">Puedes subir múltiples imágenes para la galería.</small>
