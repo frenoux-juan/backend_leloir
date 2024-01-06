@@ -1,5 +1,6 @@
 from random import sample
 from conexionBD import *  # Importando conexión BD
+import json
 
 
 def listaProductos():
@@ -25,12 +26,12 @@ def updateProducto(id=''):
     return resultQueryData
 
 
-def registrarProducto(nombre='', memo='', nuevoNombreFile='', enlacesGaleria='', fecha_publicacion='', categoria=''):
+def registrarProducto(fecha_publicacion='', nombre='', imagen='', memo='', galeria='',  categoria=''):
     conexion_MySQLdb = connectionBD()
     cursor = conexion_MySQLdb.cursor(dictionary=True)
 
-    sql = "INSERT INTO productos(nombre, imagen, memo, galeria, fecha_publicacion, categoria) VALUES (%s, %s, %s, %s, %s, %s)"
-    valores = (nombre, memo, nuevoNombreFile, enlacesGaleria, fecha_publicacion, categoria)
+    sql = "INSERT INTO productos(fecha_publicacion, nombre, imagen, memo, galeria, categoria) VALUES (%s, %s, %s, %s, %s, %s)"
+    valores = (fecha_publicacion, nombre, imagen, memo, galeria, categoria)
 
     cursor.execute(sql, valores)
     conexion_MySQLdb.commit()
@@ -50,13 +51,17 @@ def detallesdelProducto(id):
     cursor.execute("SELECT * FROM productos WHERE id ='%s'" % (id))
     resultadoQuery = cursor.fetchone()
 
+    # Convertir la cadena JSON de galería a lista
+    resultadoQuery['galeria'] = json.loads(resultadoQuery['galeria'])
+
     cursor.close()
     conexion_MySQLdb.close()
 
     return resultadoQuery
 
 
-def recibeActualizarProducto(nombre, memo, nuevoNombreFile, enlacesGaleria, fecha_publicacion, categoria, id):
+
+def recibeActualizarProducto(fecha_publicacion, nombre, imagen, memo, galeria, categoria):
     conexion_MySQLdb = connectionBD()
     cur = conexion_MySQLdb.cursor(dictionary=True)
 
@@ -64,14 +69,16 @@ def recibeActualizarProducto(nombre, memo, nuevoNombreFile, enlacesGaleria, fech
         cur.execute("""
             UPDATE productos
             SET 
+                fecha_publicacion = %s,
                 nombre   = %s,
                 memo    = %s,
                 imagen  = %s,
                 galeria = %s,
-                fecha_publicacion = %s,
+                
                 categoria = %s
             WHERE id=%s
-        """, (nombre, memo, nuevoNombreFile, enlacesGaleria, fecha_publicacion, categoria, id))
+        """, (fecha_publicacion, nombre, imagen, memo, galeria, categoria))
+
 
         conexion_MySQLdb.commit()
         resultado_update = cur.rowcount

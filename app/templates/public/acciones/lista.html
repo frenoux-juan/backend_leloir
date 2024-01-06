@@ -82,7 +82,9 @@
                         if (data[0] === 1) {
                             // Producto eliminado correctamente
                             alert('Producto eliminado correctamente');
-                            window.location.reload(); // Recargar la página o actualizar la tabla de productos
+                            // Redireccionar a /layout
+                            window.location.href = '/layout';
+ 
                         } else {
                             alert('Error al eliminar el producto');
                         }

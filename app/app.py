@@ -50,7 +50,7 @@ def login():
     return render_template('/public/login.html')
 
 
-@app.route('/')
+@app.route('/layout')
 def inicio():
     if 'logged_in' in session and session['logged_in']:
         return render_template('/public/layout.html', miData=listaProductos())
@@ -78,9 +78,11 @@ def formAddProducto():
     if request.method == 'POST':
         nombre = request.form['nombre']
         memo = request.form['memo']
+        fecha_publicacion = request.form['fecha_publicacion']  # Obtener el nuevo campo de fecha
+        categoria = request.form['categoria']  # Obtener el nuevo campo de categoría
 
         # Verificar que se haya cargado un archivo
-        if request.files['imagen'] != '':
+        if 'imagen' in request.files and request.files['imagen'].filename != '':
             file = request.files['imagen']
             nuevoNombreFile = recibeFoto(file)
 
@@ -88,11 +90,10 @@ def formAddProducto():
             enlacesGaleria = request.files.getlist('enlace_galeria[]')
 
             # Convertir la lista de enlaces de la galería a una cadena JSON
-            enlaces_galeria_json = json.dumps([stringAleatorio() + os.path.splitext(file.filename)[1] for file in enlacesGaleria])
+            galeria = json.dumps([stringAleatorio() + os.path.splitext(file.filename)[1] for file in enlacesGaleria])
 
-
-            # Llamada a la función registrarProducto con el nuevo campo "galeria"
-            resultData = registrarProducto(nombre, nuevoNombreFile, memo, enlaces_galeria_json)
+            # Llamada a la función registrarProducto con los nuevos campos "fecha_publicacion" y "categoria"
+            resultData = registrarProducto(fecha_publicacion, nombre, nuevoNombreFile, memo, galeria, categoria)
 
             # Verificar el resultado de la operación
             if resultData == 1:
@@ -149,7 +150,7 @@ def formActualizarProducto(id):
         enlaces_galeria_json = json.dumps([stringAleatorio() + os.path.splitext(file.filename)[1] for file in enlacesGaleria])
 
         # Actualizar producto con la nueva información
-        resultData = recibeActualizarProducto(nombre, memo, nueva_imagen, enlacesGaleria, fecha_publicacion, categoria, id)
+        resultData = registrarProducto(fecha_publicacion, nombre, nueva_imagen, memo, enlaces_galeria_json, categoria)
 
 
         # Manejo de resultados
@@ -175,6 +176,7 @@ def formViewBorrarProducto():
             #Nota: retorno solo un json y no una vista para evitar refescar la vista
             return jsonify([1])
             #return jsonify(["respuesta", 1])
+        
         else: 
             return jsonify([0])
 
