@@ -216,7 +216,7 @@ def formViewBorrarProducto():
         else:
             return jsonify([0])
 
-def eliminarProducto(id=''):
+def eliminarProducto(id='', imagen='', galeria_imagen=''):
     # Establecer la conexión a la base de datos
     conexion_MySQLdb = connectionBD()
     cur = conexion_MySQLdb.cursor(dictionary=True)
@@ -225,13 +225,6 @@ def eliminarProducto(id=''):
     cur.execute('SELECT * FROM productos WHERE id=%s', (id,))
     producto = cur.fetchone()
 
-    if not producto:
-        return 0  # No existe el producto, retorno indicando que no se realizó la eliminación
-
-    # Obtener las imágenes del producto
-    imagen_principal = producto.get('imagen', '')
-    galeria_imagen = producto.get('galeria', [])
-
     # Eliminar el producto de la base de datos
     cur.execute('DELETE FROM productos WHERE id=%s', (id,))
     conexion_MySQLdb.commit()
@@ -239,21 +232,22 @@ def eliminarProducto(id=''):
 
     # Eliminar la imagen principal del producto
     basepath = os.path.dirname(__file__)
-    if imagen_principal:
-        imagen_principal_path = os.path.join(basepath, 'static/assets/fotos_productos', imagen_principal)
-        try:
-            os.remove(imagen_principal_path)
-        except FileNotFoundError:
-            pass  # No mostrar error si la imagen principal no se encuentra
+    url_File = os.path.join(basepath, 'static/assets/fotos_productos', imagen)
+    try:
+        os.remove(url_File)
+    except FileNotFoundError:
+        pass  # No mostrar error si la imagen no se encuentra
 
     # Eliminar las imágenes asociadas a la galería (si existen)
     galeria_path = os.path.join(basepath, 'static/assets/fotos_productos')
-    for galeria_imagen_nombre in galeria_imagen:
-        galeria_imagen_path = os.path.join(galeria_path, galeria_imagen_nombre)
-        try:
-            os.remove(galeria_imagen_path)
-        except FileNotFoundError:
-            pass  # No mostrar error si alguna imagen de la galería no se encuentra
+    if producto and 'galeria' in producto:
+        galeria_imagenes = json.loads(producto['galeria'])
+        for galeria_imagen in galeria_imagenes:
+            galeria_url = os.path.join(galeria_path, galeria_imagen)
+            try:
+                os.remove(galeria_url)
+            except FileNotFoundError:
+                pass  # No mostrar error si la imagen de la galería no se encuentra
 
     return resultado_eliminar
 
