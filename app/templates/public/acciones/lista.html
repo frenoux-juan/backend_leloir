@@ -1,3 +1,4 @@
+
 <!-- {{ miData }} -->
 {% if miData %}
 <div class="table-responsive">
@@ -21,9 +22,9 @@
 
                 <td>
                     {% if producto.imagen %}
-                    <img src="{{ urlProducto }}{{ producto.imagen }}" class="sin_foto_mini" alt="{{ producto.nombre }}">
+                    <img src="{{ urlProducto }}{{ producto.imagen }}" class="sin_foto_mini" alt="{{ producto.nombre }}" style="max-width: 100px; max-height: 100px;">
                     {% else %}
-                    <img src="{{ urlProducto }}sin_foto.jpg" class="sin_foto_mini" alt="coche">
+                    <img src="{{ urlProducto }}sin_foto.jpg" class="sin_foto_mini" alt="coche" style="max-width: 100px; max-height: 100px;">
                     {% endif %}
                 </td>
                 <td width="300">
