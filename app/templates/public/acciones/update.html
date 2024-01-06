@@ -49,9 +49,9 @@
                 {% set urlProducto = '/static/assets/fotos_productos/' %}
                 <div class="col-md-6">
                     {% if(dataInfo.imagen !="") %}
-                        <img src="{{ urlProducto }}{{ dataInfo.imagen }}" class="foto_update" alt="{{ dataInfo.nombre }}">
+                    <img src="{{ urlProducto }}{{ dataInfo.imagen }}" class="foto_update" alt="{{ dataInfo.nombre }}" style="max-width: 50px; max-height: 80px;">
                     {% else %}
-                        <img src="{{ urlProducto }}sin_foto.jpg" class="foto_update" alt="imagen-sin">
+                    <img src="{{ urlProducto }}sin_foto.jpg" class="foto_update" alt="imagen-sin" style="max-width: 80px; max-height: 50px;">
                     {% endif %}
                 </div>
                 <div class="col-md-6">

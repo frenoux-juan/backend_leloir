@@ -134,7 +134,6 @@ def viewDetalleProducto(id):
     return redirect(url_for('inicio'))
     
 
-# Nueva función para actualizar un producto
 def actualizarProducto(id, fecha_publicacion, nombre, nueva_imagen, memo, enlaces_galeria_json, categoria):
     conexion_MySQLdb = connectionBD()
     cur = conexion_MySQLdb.cursor(dictionary=True)
@@ -156,6 +155,12 @@ def actualizarProducto(id, fecha_publicacion, nombre, nueva_imagen, memo, enlace
 
     # Agregar las nuevas imágenes de la galería
     nuevas_imagenes = json.loads(enlaces_galeria_json)
+
+    # Guardar las nuevas imágenes en el servidor
+    galeria_path = os.path.join(basepath, 'static/assets/fotos_productos')
+    for nueva_imagen_galeria in nuevas_imagenes:
+        nueva_imagen_galeria_path = os.path.join(galeria_path, nueva_imagen_galeria)
+        # Aquí deberías guardar la nueva_imagen_galeria en el servidor (similar a como lo haces en recibeFoto)
 
     # Actualizar los campos del producto en la base de datos
     cur.execute('UPDATE productos SET fecha_publicacion=%s, nombre=%s, imagen=%s, memo=%s, galeria=%s, categoria=%s WHERE id=%s',
@@ -250,6 +255,7 @@ def eliminarProducto(id='', imagen='', galeria_imagen=''):
                 pass  # No mostrar error si la imagen de la galería no se encuentra
 
     return resultado_eliminar
+
 
 def recibeFoto(file):
     print(file)
