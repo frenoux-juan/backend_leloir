@@ -96,10 +96,8 @@ def formAddProducto():
                 galeria.append(nuevoNombreFileGaleria)
 
             # Convertir la lista de enlaces de la galería a una cadena JSON
-            galeria_json = json.dumps(galeria, ensure_ascii=False, separators=(',', ':'))
+            galeria_json = '[' + ', '.join(json.dumps(enlace, ensure_ascii=False) for enlace in galeria) + ']'
 
-            # Agregar corchetes al principio y al final de la cadena JSON
-            galeria_json = '[' + galeria_json + ']'
 
 
 
