@@ -31,6 +31,7 @@
                     <label for="categoria">Categoría</label>
                     <select name="categoria" class="form-control">
                         <option value="inicial" {% if dataInfo.categoria == 'inicial' %}selected{% endif %}>Inicial</option>
+                        <option value="primaria" {% if dataInfo.categoria == 'primaria' %}selected{% endif %}>Primaria</option>
                         <option value="secundaria" {% if dataInfo.categoria == 'secundaria' %}selected{% endif %}>Secundaria</option>
                         <option value="administracion" {% if dataInfo.categoria == 'administracion' %}selected{% endif %}>Administración</option>
                     </select>
