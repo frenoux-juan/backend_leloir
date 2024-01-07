@@ -96,7 +96,12 @@ def formAddProducto():
                 galeria.append(nuevoNombreFileGaleria)
 
             # Convertir la lista de enlaces de la galería a una cadena JSON
-            galeria_json = json.dumps(galeria)
+            galeria_json = json.dumps(galeria, ensure_ascii=False, separators=(',', ':'))
+
+            # Agregar corchetes al principio y al final de la cadena JSON
+            galeria_json = '[' + galeria_json + ']'
+
+
 
             # Llamada a la función registrarProducto con los nuevos campos "fecha_publicacion" y "categoria"
             resultData = registrarProducto(fecha_publicacion, nombre, nuevoNombreFile, memo, galeria_json, categoria)
