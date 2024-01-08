@@ -14,10 +14,7 @@
     height: auto;
     
 }
-.bg-light{
-    height: 60px;
-    box-shadow: 0 4px 32px 0 rgba(10,14,29,.02),0 8px 64px 0 rgba(10,14,29,.08);
-}
+
 .producto{
     max-width: 100px !important;
 }
@@ -95,4 +92,16 @@ h2{
 }
 .bi-arrow-left-circle:hover{
     color: #333;
+}
+
+.logo_leloir {
+    text-align: center; /* Centra el contenido dentro del div */
+    margin-top: 20px; /* Ajusta el margen superior para centrar en la parte superior */
+    
+
+}
+
+.logo_leloir img {
+    width: 30%; /* Ajusta el ancho de la imagen según tus preferencias */
+    height: auto; /* Mantiene la proporción de la imagen */
 }
